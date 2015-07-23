@@ -1,0 +1,14 @@
+*.py[cod]
+
+# Installer logs
+pip-log.txt
+
+# Backup files
+*~
+
+# Tests
+.coverage
+/cover
+
+# python virtual environment
+/.env

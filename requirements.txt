@@ -1,0 +1,6 @@
+pika==0.9.14
+
+# Testing
+nose
+mock
+coverage

@@ -18,7 +18,3 @@ with Consumer('hello_world_queue') as consumer:
         time.sleep(msg.count('.'))
         print '[x] Done'
     consumer.subscribe(on_message)
-    # try:
-    #     consumer.subscribe(on_message)
-    # except KeyboardInterrupt:
-    #     print '\b\bBye.'

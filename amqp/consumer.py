@@ -13,12 +13,14 @@ class Consumer(object):
             my_consumer.subscribe(on_message)
     """
 
-    def __init__(self, queue, host='localhost'):
+    def __init__(self, queue, host='localhost', port=None):
         self._queue = queue
         self._host = host
+        self._port = port
         self._channel, self._connection = get_channel(
             self._queue,
-            host=self._host
+            host=self._host,
+            port=self._port
         )
         # Set Quality Of Service (QOS) with prefetch count equal to 1.
         # TODO: Should we try to play with this parameter?

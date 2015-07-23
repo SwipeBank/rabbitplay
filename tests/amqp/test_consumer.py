@@ -8,6 +8,7 @@ class TestConsumer(unittest.TestCase):
     def setUp(self):
         self._queue = 'my_queue'
         self._host = 'my_host.com'
+        self._port = 5672
 
     def tearDown(self):
         pass
@@ -18,5 +19,9 @@ class TestConsumer(unittest.TestCase):
             'basic_qos.return_value': 1
         })
         mock_get_channel.return_value = (ChannelMock(), 1)
-        consumer = Consumer(self._queue, host=self._host)
-        mock_get_channel.assert_called_once_with(self._queue, host=self._host)
+        consumer = Consumer(self._queue, host=self._host, port=self._port)
+        mock_get_channel.assert_called_once_with(
+            self._queue,
+            host=self._host,
+            port=self._port
+        )

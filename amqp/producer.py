@@ -13,12 +13,14 @@ class Producer(object):
             )
     """
 
-    def __init__(self, queue, host='localhost'):
+    def __init__(self, queue, host='localhost', port=None):
         self._queue = queue
         self._host = host
+        self._port = port
         self._channel, self._connection = get_channel(
             self._queue,
-            host=self._host
+            host=self._host,
+            port=self._port
         )
         # Message Broker should confirm that
         # the message has reached the queue:

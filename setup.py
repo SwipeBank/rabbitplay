@@ -2,7 +2,8 @@ from setuptools import setup
 from pip.req import parse_requirements
 
 
-requirements = [str(x.req) for x in parse_requirements('./requirements.txt')]
+reqs = parse_requirements('./requirements.txt', session=False)
+requirements = [str(x.req) for x in reqs]
 
 setup(
     name="RabbitPlay",

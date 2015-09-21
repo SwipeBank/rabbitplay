@@ -1,4 +1,3 @@
-import pika
 from msg_broker.channel import get_channel, publish_properties
 
 

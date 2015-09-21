@@ -6,7 +6,7 @@ publish_properties = pika.BasicProperties(
 )
 
 
-def broker_credentials(user=None, password=None, clean_creds=True):
+def set_broker_credentials(user=None, password=None, clean_creds=True):
     if not user:
         return None
     return pika.credentials.PlainCredentials(
@@ -18,16 +18,17 @@ def broker_credentials(user=None, password=None, clean_creds=True):
 
 def _get_connection(host='localhost', port=None, vhost=None,
                     user=None, password=None, clean_creds=True):
+    broker_credentials = set_broker_credentials(
+        user=user,
+        password=password,
+        clean_creds=clean_creds
+    )
     return pika.BlockingConnection(
         pika.ConnectionParameters(
             host=host,
             port=port,
             virtual_host=vhost,
-            credentials=broker_credentials(
-                user=user,
-                password=password,
-                clean_creds=clean_creds
-            )
+            credentials=broker_credentials
         )
     )
 

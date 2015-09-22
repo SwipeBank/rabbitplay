@@ -1,4 +1,4 @@
-pika==0.9.14
+pika==0.10.0
 
 # Testing
 nose

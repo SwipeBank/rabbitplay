@@ -1,4 +1,5 @@
 from msg_broker.channel import get_channel
+import ssl
 
 
 class Consumer(object):
@@ -14,7 +15,9 @@ class Consumer(object):
     """
 
     def __init__(self, queue, host='localhost', port=None, vhost=None,
-                 user=None, password=None, clean_creds=True):
+                 user=None, password=None, clean_creds=True,
+                 ca_certs=None, cert_reqs=ssl.CERT_NONE, certfile=None,
+                 keyfile=None, ssl_enable=False, ssl_version=None):
         self._queue = queue
         self._host = host
         self._port = port
@@ -22,6 +25,12 @@ class Consumer(object):
         self._user = user
         self._password = password
         self._clean_creds = clean_creds
+        self._ca_certs = ca_certs
+        self._cert_reqs = cert_reqs
+        self._certfile = certfile
+        self._keyfile = keyfile
+        self._ssl_enable = ssl_enable
+        self._ssl_version = ssl_version
         self._channel, self._connection = get_channel(
             self._queue,
             host=self._host,
@@ -29,7 +38,13 @@ class Consumer(object):
             vhost=self._vhost,
             user=self._user,
             password=self._password,
-            clean_creds=self._clean_creds
+            clean_creds=self._clean_creds,
+            ca_certs=self._ca_certs,
+            cert_reqs=self._cert_reqs,
+            certfile=self._certfile,
+            keyfile=self._keyfile,
+            ssl_enable=self._ssl_enable,
+            ssl_version=self._ssl_version
         )
         # Set Quality Of Service (QOS) with prefetch count equal to 1.
         # TODO: Should we try to play with this parameter?

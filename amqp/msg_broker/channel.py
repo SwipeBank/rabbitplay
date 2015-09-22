@@ -46,6 +46,7 @@ def _get_connection(**kwargs):
             port=kwargs['port'],
             virtual_host=kwargs['vhost'],
             credentials=broker_credentials,
+            heartbeat_interval=kwargs['heartbeat_interval'],
             ssl=kwargs['ssl_enable'],
             ssl_options=broker_ssl
         )
@@ -55,7 +56,8 @@ def _get_connection(**kwargs):
 def get_channel(queue, host='localhost', port=None, vhost=None,
                 user=None, password=None, clean_creds=True,
                 ca_certs=None, cert_reqs=ssl.CERT_NONE, certfile=None,
-                keyfile=None, ssl_enable=False, ssl_version=None):
+                keyfile=None, ssl_enable=False, ssl_version=None,
+                heartbeat_interval=10):
     """ Returns channel and connection:
     1. a new instance of channel on the host `host` with
     declaring the queue `queue`;
@@ -68,6 +70,7 @@ def get_channel(queue, host='localhost', port=None, vhost=None,
         user=user,
         password=password,
         clean_creds=clean_creds,
+        heartbeat_interval=heartbeat_interval,
         ca_certs=ca_certs,
         cert_reqs=cert_reqs,
         certfile=certfile,

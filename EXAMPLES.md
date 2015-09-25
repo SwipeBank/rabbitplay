@@ -30,7 +30,7 @@ docker run \
   --name rabbitplay_receive \
   --rm \
   -it \
-  --net host \
+  --net container:rabbitplaymq \
   -e PYTHONUNBUFFERED=1 \
   rabbitplay \
   python -m examples.receive
@@ -42,7 +42,7 @@ docker run \
   --name rabbitplay_send \
   --rm \
   -it \
-  --net host \
+  --net container:rabbitplaymq \
   -e PYTHONUNBUFFERED=1 \
   rabbitplay \
   python -m examples.send_message 'rabbit......'

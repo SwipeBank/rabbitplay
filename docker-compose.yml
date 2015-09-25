@@ -1,6 +1,7 @@
 rabbitmq:
   image: rabbitmq:3.5.4
-  net: host
+  container_name: rabbitplaymq
+  hostname: rabbitmq
   environment:
     RABBITMQ_NODENAME: touchbank
     RABBITMQ_ERLANG_COOKIE: tb_cookie

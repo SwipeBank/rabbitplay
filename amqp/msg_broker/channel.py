@@ -55,9 +55,9 @@ def _get_connection(**kwargs):
 
 def get_channel(queue, host='localhost', port=None, vhost=None,
                 user=None, password=None, clean_creds=True,
-                ca_certs=None, cert_reqs=ssl.CERT_NONE, certfile=None,
-                keyfile=None, ssl_enable=False, ssl_version=None,
-                heartbeat_interval=10):
+                heartbeat_interval=30, ca_certs=None, cert_reqs=ssl.CERT_NONE,
+                certfile=None, keyfile=None, ssl_enable=True,
+                ssl_version=ssl.PROTOCOL_SSLv23):
     """ Returns channel and connection:
     1. a new instance of channel on the host `host` with
     declaring the queue `queue`;

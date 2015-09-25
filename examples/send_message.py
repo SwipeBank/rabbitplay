@@ -3,5 +3,10 @@
 import sys
 from amqp.producer import Producer
 
-with Producer('hello_world_queue') as producer:
+vhost = 'rabbit_host'
+user = 'rabbit_user'
+password = 'rabbit_password'
+
+with Producer('hello_world_queue', vhost=vhost,
+              user=user, password=password) as producer:
     producer.publish(' '.join(sys.argv[1:]) or 'Hello World!')

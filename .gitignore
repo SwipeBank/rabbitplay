@@ -12,8 +12,3 @@ pip-log.txt
 
 # python virtual environment
 /.env
-
-# docker
-docker-compose.yml
-Dockerfile
-docker_run

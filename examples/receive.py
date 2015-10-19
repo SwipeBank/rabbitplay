@@ -1,10 +1,12 @@
+#!/usr/bin/env python
+
 import sys
 import time
 import signal
-from amqp.consumer import Consumer
+from flask_rabbitplay.rabbitplay import Consumer
 
 
-def signal_handler(signum, frame):
+def signal_handler(signum):
     print '\nSignal {}'.format(signum)
     sys.exit(0)
 
@@ -12,12 +14,11 @@ def signal_handler(signum, frame):
 signal.signal(signal.SIGINT, signal_handler)
 signal.signal(signal.SIGTERM, signal_handler)
 
-vhost = 'rabbit_host'
-user = 'rabbit_user'
-password = 'rabbit_password'
-
-with Consumer('hello_world_queue', vhost=vhost,
-              user=user, password=password) as consumer:
+# vhost:
+#   vhost='vhost', user='user', password='password'
+# ssl:
+#   ssl_enable=True, certfile='/path/to/cert.pem', keyfile='/path/to/key.pem'
+with Consumer('hello_world_queue') as consumer:
     def on_message(msg):
         print '[x] Received "{}"'.format(msg)
         time.sleep(msg.count('.'))

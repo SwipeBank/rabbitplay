@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 
 import sys
-from amqp.producer import Producer
+from flask_rabbitplay.rabbitplay import Producer
 
-vhost = 'rabbit_host'
-user = 'rabbit_user'
-password = 'rabbit_password'
-
-with Producer('hello_world_queue', vhost=vhost,
-              user=user, password=password) as producer:
+# vhost:
+#   vhost='vhost', user='user', password='password'
+# ssl:
+#   ssl_enable=True, certfile='/path/to/cert.pem', keyfile='/path/to/key.pem'
+with Producer('hello_world_queue') as producer:
     producer.publish(' '.join(sys.argv[1:]) or 'Hello World!')

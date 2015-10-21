@@ -3,24 +3,21 @@
 import sys
 import time
 import signal
-from flask_rabbitplay.rabbitplay import Consumer
+from rabbitplay import Consumer
 
 
-def signal_handler(signum):
-    print '\nSignal {}'.format(signum)
+def signal_handler(signum, frame):
+    print '\nsignal {}'.format(signum)
     sys.exit(0)
 
 
 signal.signal(signal.SIGINT, signal_handler)
 signal.signal(signal.SIGTERM, signal_handler)
 
-# vhost:
-#   vhost='vhost', user='user', password='password'
-# ssl:
-#   ssl_enable=True, certfile='/path/to/cert.pem', keyfile='/path/to/key.pem'
-with Consumer('hello_world_queue') as consumer:
+
+with Consumer(queue='hello') as consumer:
     def on_message(msg):
-        print '[x] Received "{}"'.format(msg)
+        print '[x] received "{}"'.format(msg)
         time.sleep(msg.count('.'))
-        print '[x] Done'
+        print '[x] done'
     consumer.subscribe(on_message)

@@ -4,7 +4,7 @@ import ssl
 
 class RabbitPlay(object):
 
-    def __init__(self, queue='queue', host='localhost', port=5672, vhost=None,
+    def __init__(self, queue, host='localhost', port=5672, vhost=None,
                  user=None, password=None, clean_creds=None, channel_max=None,
                  frame_max=None, heartbeat_interval=None, ca_certs=None,
                  cert_reqs=ssl.CERT_NONE, certfile=None, keyfile=None,

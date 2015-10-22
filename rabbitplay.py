@@ -4,11 +4,13 @@ import ssl
 
 class RabbitPlay(object):
 
-    def __init__(self, queue='queue', host='localhost', port=5672,
-                 vhost=None, user=None, password=None, clean_creds=None,
-                 heartbeat_interval=30, ca_certs=None, cert_reqs=ssl.CERT_NONE,
-                 certfile=None, keyfile=None, ssl_enable=False,
-                 ssl_version=ssl.PROTOCOL_SSLv23):
+    def __init__(self, queue='queue', host='localhost', port=5672, vhost=None,
+                 user=None, password=None, clean_creds=None, channel_max=None,
+                 frame_max=None, heartbeat_interval=None, ca_certs=None,
+                 cert_reqs=ssl.CERT_NONE, certfile=None, keyfile=None,
+                 ssl_enable=False, ssl_version=ssl.PROTOCOL_SSLv23,
+                 connection_attempts=None, retry_delay=None, locale=None,
+                 socket_timeout=None, backpressure_detection=None):
         self.queue = queue
         self.host = host
         self.port = port
@@ -16,6 +18,8 @@ class RabbitPlay(object):
         self.user = user
         self.password = password
         self.clean_creds = clean_creds
+        self.channel_max = channel_max
+        self.frame_max = frame_max
         self.heartbeat_interval = heartbeat_interval
         self.ca_certs = ca_certs
         self.cert_reqs = cert_reqs
@@ -23,6 +27,11 @@ class RabbitPlay(object):
         self.keyfile = keyfile
         self.ssl_enable = ssl_enable
         self.ssl_version = ssl_version
+        self.connection_attempts = connection_attempts
+        self.retry_delay = retry_delay
+        self.locale = locale
+        self.socket_timeout = socket_timeout
+        self.backpressure_detection = backpressure_detection
 
     def __enter__(self):
         return self
@@ -60,16 +69,16 @@ class RabbitPlay(object):
                 port=self.port,
                 virtual_host=self.vhost,
                 credentials=self.set_credentials(),
-                # channel_max=None,  # TODO
-                # frame_max=None,  # TODO
+                channel_max=self.channel_max,
+                frame_max=self.frame_max,
                 heartbeat_interval=self.heartbeat_interval,
                 ssl=self.ssl_enable,
                 ssl_options=self.set_ssl_options(),
-                # connection_attempts=None,  # TODO
-                # retry_delay=None,  # TODO
-                # socket_timeout=None,  # TODO
-                # locale=None,  # TODO
-                # backpressure_detection=None  # TODO
+                connection_attempts=self.connection_attempts,
+                retry_delay=self.retry_delay,
+                locale=self.locale,
+                socket_timeout=self.socket_timeout,
+                backpressure_detection=self.backpressure_detection
             )
         )
 

@@ -40,27 +40,25 @@ class RabbitPlay(object):
         self._connection.close()
 
     def set_credentials(self):
-        rabbit_credentials = None
-        if self.user:
-            rabbit_credentials = pika.credentials.PlainCredentials(
+        if not self.user:
+            return None
+        return pika.credentials.PlainCredentials(
                 username=self.username,
                 password=self.password,
                 erase_on_connect=self.clean_creds
             )
-        return rabbit_credentials
 
     def set_ssl_options(self):
-        ssl_options = None
-        if self.ssl_enable:
-            ssl_options = {
-                ca_certs: self.ca_certs,
-                cert_reqs: self.cert_reqs,
-                certfile: self.certfile,
-                keyfile: self.keyfile,
-                ssl_enable: self.ssl_enable,
-                ssl_version: self.ssl_version
+        if not self.ssl_enable:
+            return None
+        return {
+                "ca_certs": self.ca_certs,
+                "cert_reqs": self.cert_reqs,
+                "certfile": self.certfile,
+                "keyfile": self.keyfile,
+                "ssl_enable": self.ssl_enable,
+                "ssl_version": self.ssl_version
             }
-        return ssl_options
 
     def _get_connection(self):
         return pika.BlockingConnection(

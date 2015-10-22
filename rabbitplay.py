@@ -32,6 +32,7 @@ class RabbitPlay(object):
         self.locale = locale
         self.socket_timeout = socket_timeout
         self.backpressure_detection = backpressure_detection
+        self.__rabbit_connection__ = None
 
     def __enter__(self):
         return self
@@ -60,7 +61,7 @@ class RabbitPlay(object):
                 "ssl_version": self.ssl_version
             }
 
-    def _get_connection(self):
+    def _create_connection(self):
         return pika.BlockingConnection(
             pika.ConnectionParameters(
                 host=self.host,
@@ -80,13 +81,18 @@ class RabbitPlay(object):
             )
         )
 
+    def get_connection(self):
+        if not self.__rabbit_connection__:
+            self.__rabbit_connection__ = self._create_connection()
+        return self.__rabbit_connection__
+
     def get_channel(self):
         """ returns channel and connection:
         1. a new instance of channel on the host `host` with
         declaring the queue `queue`;
         2. a connection used to created a channel.
         """
-        connection = self._get_connection()
+        connection = self.get_connection()
         channel = connection.channel()
         channel.queue_declare(queue=self.queue, durable=True)
         return channel, connection

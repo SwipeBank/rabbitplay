@@ -44,7 +44,7 @@ class RabbitPlay(object):
         if not self.user:
             return None
         return pika.credentials.PlainCredentials(
-                username=self.username,
+                username=self.user,
                 password=self.password,
                 erase_on_connect=self.clean_creds
             )

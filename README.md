@@ -13,7 +13,7 @@ python -m examples.receive
 ### Producer:  
 
 ```sh
-python -m examples.send_message 'rabbit1...............'
-python -m examples.send_message 'rabbit2..........'
-python -m examples.send_message 'rabbit3.....'
+python -m examples.send_message 'rabbit1.'
+python -m examples.send_message 'rabbit5.....'
+python -m examples.send_message 'rabbit10..........'
 ```

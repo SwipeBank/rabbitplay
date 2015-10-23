@@ -5,5 +5,8 @@ rabbitmq:
     - "15672:15672"
   hostname: rabbitmq
   environment:
-    RABBITMQ_NODENAME: swipe_rabbit
-    RABBITMQ_ERLANG_COOKIE: swipe_cookie
+    RABBITMQ_NODENAME: rabbit
+    RABBITMQ_ERLANG_COOKIE: cookie
+    RABBITMQ_DEFAULT_USER: user
+    RABBITMQ_DEFAULT_PASS: password
+    RABBITMQ_DEFAULT_VHOST: vhost

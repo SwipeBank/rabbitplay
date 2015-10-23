@@ -15,7 +15,8 @@ signal.signal(signal.SIGINT, signal_handler)
 signal.signal(signal.SIGTERM, signal_handler)
 
 
-with Consumer(queue='hello') as consumer:
+with Consumer('hello_world_queue', user='user',
+              password='password', vhost='vhost') as consumer:
     def on_message(msg):
         print '[x] received "{}"'.format(msg)
         time.sleep(msg.count('.'))

@@ -1,6 +1,7 @@
 """
 RabbitPlay
 -------------
+
 A simple abstraction on top of pika to deal with RabbitMQ
 """
 from setuptools import setup

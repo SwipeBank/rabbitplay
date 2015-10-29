@@ -1,20 +1,24 @@
+#!/usr/bin/env python
+
 import sys
 import time
 import signal
-from amqp.consumer import Consumer
+from rabbitplay import Consumer
 
 
 def signal_handler(signum, frame):
-    print '\nSignal {}'.format(signum)
+    print '\nsignal {}'.format(signum)
     sys.exit(0)
 
 
 signal.signal(signal.SIGINT, signal_handler)
 signal.signal(signal.SIGTERM, signal_handler)
 
-with Consumer('hello_world_queue') as consumer:
+
+with Consumer('hello_world_queue', user='user',
+              password='password', vhost='vhost') as consumer:
     def on_message(msg):
-        print '[x] Received "{}"'.format(msg)
+        print '[x] received "{}"'.format(msg)
         time.sleep(msg.count('.'))
-        print '[x] Done'
+        print '[x] done'
     consumer.subscribe(on_message)

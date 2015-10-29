@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 
 import sys
-from amqp.producer import Producer
+from rabbitplay import Producer
 
-with Producer('hello_world_queue') as producer:
-    producer.publish(' '.join(sys.argv[1:]) or 'Hello World!')
+
+with Producer('hello_world_queue', user='user',
+              password='password', vhost='vhost') as producer:
+    producer.publish(' '.join(sys.argv[1:]) or 'hello')

@@ -1,6 +1,6 @@
 # RabbitPlay
 
-A simple abstraction on top of python [pika](https://pika.readthedocs.org/) to deal with [RabbitMQ](https://www.rabbitmq.com/).
+Abstraction on top of [pika](https://pika.readthedocs.org/) library for working with [RabbitMQ](https://www.rabbitmq.com/).
 
 ## Examples  
 

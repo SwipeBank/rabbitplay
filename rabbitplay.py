@@ -81,9 +81,14 @@ class RabbitPlay(object):
             )
         )
 
+    def _check_connection(self):
+        conn = self.__rabbit_connection__
+        if not hasattr(conn, 'is_open') or conn.is_closed or conn.is_closing:
+            conn = self._create_connection()
+        return conn
+
     def get_connection(self):
-        if not self.__rabbit_connection__:
-            self.__rabbit_connection__ = self._create_connection()
+        self.__rabbit_connection__ = self._check_connection()
         return self.__rabbit_connection__
 
     def get_channel(self):

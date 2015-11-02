@@ -1,6 +1,8 @@
 import pika
 import ssl
 
+__rabbit_connection__ = None
+
 
 class RabbitPlay(object):
 
@@ -32,7 +34,6 @@ class RabbitPlay(object):
         self.locale = locale
         self.socket_timeout = socket_timeout
         self.backpressure_detection = backpressure_detection
-        self.__rabbit_connection__ = None
 
     def __enter__(self):
         return self
@@ -40,7 +41,7 @@ class RabbitPlay(object):
     def __exit__(self, exception_type, exception_value, traceback):
         self._connection.close()
 
-    def set_credentials(self):
+    def _credentials(self):
         if not self.user:
             return None
         return pika.credentials.PlainCredentials(
@@ -49,42 +50,41 @@ class RabbitPlay(object):
                 erase_on_connect=self.clean_creds
             )
 
-    def set_ssl_options(self):
+    def _ssl_options(self):
         if not self.ssl_enable:
             return None
         return {
-                "ca_certs": self.ca_certs,
-                "cert_reqs": self.cert_reqs,
-                "certfile": self.certfile,
-                "keyfile": self.keyfile,
-                "ssl_enable": self.ssl_enable,
-                "ssl_version": self.ssl_version
-            }
+            "ca_certs": self.ca_certs,
+            "cert_reqs": self.cert_reqs,
+            "certfile": self.certfile,
+            "keyfile": self.keyfile,
+            "ssl_enable": self.ssl_enable,
+            "ssl_version": self.ssl_version
+        }
 
-    def _create_connection(self):
-        return pika.BlockingConnection(
-            pika.ConnectionParameters(
-                host=self.host,
-                port=self.port,
-                virtual_host=self.vhost,
-                credentials=self.set_credentials(),
-                channel_max=self.channel_max,
-                frame_max=self.frame_max,
-                heartbeat_interval=self.heartbeat_interval,
-                ssl=self.ssl_enable,
-                ssl_options=self.set_ssl_options(),
-                connection_attempts=self.connection_attempts,
-                retry_delay=self.retry_delay,
-                locale=self.locale,
-                socket_timeout=self.socket_timeout,
-                backpressure_detection=self.backpressure_detection
-            )
+    def _connection_params(self):
+        return pika.ConnectionParameters(
+            host=self.host,
+            port=self.port,
+            virtual_host=self.vhost,
+            credentials=self._credentials(),
+            channel_max=self.channel_max,
+            frame_max=self.frame_max,
+            heartbeat_interval=self.heartbeat_interval,
+            ssl=self.ssl_enable,
+            ssl_options=self._ssl_options(),
+            connection_attempts=self.connection_attempts,
+            retry_delay=self.retry_delay,
+            locale=self.locale,
+            socket_timeout=self.socket_timeout,
+            backpressure_detection=self.backpressure_detection
         )
 
-    def get_connection(self):
-        if not self.__rabbit_connection__:
-            self.__rabbit_connection__ = self._create_connection()
-        return self.__rabbit_connection__
+    def _get_connection(self):
+        conn = __rabbit_connection__
+        if not hasattr(conn, 'is_open') or conn.is_closed or conn.is_closing:
+            conn = pika.BlockingConnection(self._connection_params())
+        return conn
 
     def get_channel(self):
         """ returns channel and connection:
@@ -92,9 +92,12 @@ class RabbitPlay(object):
         declaring the queue `queue`;
         2. a connection used to created a channel.
         """
-        connection = self.get_connection()
+        connection = self._get_connection()
         channel = connection.channel()
-        channel.queue_declare(queue=self.queue, durable=True)
+        channel.queue_declare(
+            queue=self.queue,
+            durable=True
+        )
         return channel, connection
 
 

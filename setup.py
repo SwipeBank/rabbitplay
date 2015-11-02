@@ -13,7 +13,7 @@ requirements = [str(x.req) for x in reqs]
 
 setup(
     name="RabbitPlay",
-    version="0.5",
+    version="0.6",
     url='https://github.com/SwipeBank/rabbitplay',
     author='Eugene <f0t0n> Naydenov',
     author_email='t.34.oxygen@gmail.com',

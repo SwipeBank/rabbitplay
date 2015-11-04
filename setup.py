@@ -13,10 +13,10 @@ requirements = [str(x.req) for x in reqs]
 
 setup(
     name="RabbitPlay",
-    version="0.6",
+    version="0.7",
     url='https://github.com/SwipeBank/rabbitplay',
-    author='Eugene <f0t0n> Naydenov',
-    author_email='t.34.oxygen@gmail.com',
+    author='Eugene <f0t0n> Naydenov, Michael <m1kev> Voropaiev',
+    author_email='t.34.oxygen@gmail.com, m.voropaiev@gmail.com',
     description='Abstraction on top of pika for working with RabbitMQ.',
     long_description=__doc__,
     py_modules=['rabbitplay'],

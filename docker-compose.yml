@@ -4,6 +4,7 @@ rabbitmq:
     - "5672:5672"
     - "15672:15672"
   hostname: rabbitmq
+  # privileged: true
   environment:
     RABBITMQ_NODENAME: rabbit
     RABBITMQ_ERLANG_COOKIE: cookie

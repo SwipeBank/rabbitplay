@@ -34,12 +34,13 @@ class RabbitPlay(object):
         self.locale = locale
         self.socket_timeout = socket_timeout
         self.backpressure_detection = backpressure_detection
+        self._channels = {}
 
     def __enter__(self):
         return self
 
     def __exit__(self, exception_type, exception_value, traceback):
-        self._connection.close()
+        self._channel.connection.close()
 
     def _credentials(self):
         if not self.user:
@@ -80,46 +81,35 @@ class RabbitPlay(object):
             backpressure_detection=self.backpressure_detection
         )
 
-    def _get_connection(self):
+    @property
+    def _connection(self):
         conn = __rabbit_connection__
-        if not hasattr(conn, 'is_open') or conn.is_closed or conn.is_closing:
-            conn = pika.BlockingConnection(self._connection_params())
+        if conn and conn.is_open:
+            return conn
+        conn = pika.BlockingConnection(self._connection_params())
         return conn
 
-    def get_channel(self):
-        """ returns channel and connection:
-        1. a new instance of channel on the host `host` with
-        declaring the queue `queue`;
-        2. a connection used to created a channel.
-        """
-        connection = self._get_connection()
-        channel = connection.channel()
+    @property
+    def _channel(self):
+        channel = self._channels.get(self.queue)
+        if channel and channel.is_open:
+            return channel
+        channel = self._connection.channel()
         channel.queue_declare(
             queue=self.queue,
             durable=True
         )
-        return channel, connection
+        self._channels[self.queue] = channel
+        return channel
 
 
 class Producer(RabbitPlay):
-    """ an abstraction layer for easy message publishing.
-    example of usage:
-    with producer('hello_world_queue') as my_producer:
-        is_published = my_producer.publish(
-            json_dumps({'name': 'bob', age': 42})
-        )
-    """
     def __init__(self, *args, **kwargs):
         super(Producer, self).__init__(*args, **kwargs)
-        self._channel, self._connection = self.get_channel()
-        # Message Broker should confirm that
-        # the message has reached the queue:
+        # confirm that he message has reached the queue:
         self._channel.confirm_delivery()
 
     def publish(self, message):
-        """ returns true if the the `message` has been to the queue
-        successfully.
-        """
         return self._channel.basic_publish(
             exchange='',
             routing_key=self.queue,
@@ -131,18 +121,10 @@ class Producer(RabbitPlay):
 
 
 class Consumer(RabbitPlay):
-    """ an abstraction layer for easy messages consuming.
-    example of usage:
-    def on_message(message):
-        print '[x] received "{}"'.format(message)
-    with consumer('hello_world_queue') as my_consumer:
-        my_consumer.subscribe(on_message)
-    """
     def __init__(self, *args, **kwargs):
         super(Consumer, self).__init__(*args, **kwargs)
-        self._channel, self._connection = self.get_channel()
-        # Set Quality Of Service (QOS) with prefetch count equal to 1.
-        # TODO: Should we try to play with this parameter?
+        # set quality of service (qos) with prefetch count equal to 1.
+        # TODO: should we try to play with this parameter?
         self._channel.basic_qos(prefetch_count=1)
 
     def _callback_with_ack(self, callback):

@@ -83,10 +83,13 @@ class RabbitPlay(object):
 
     @property
     def _connection(self):
+        global __rabbit_connection__
         conn = __rabbit_connection__
         if conn and conn.is_open:
             return conn
-        conn = pika.BlockingConnection(self._connection_params())
+        conn = __rabbit_connection__ = pika.BlockingConnection(
+            self._connection_params()
+        )
         return conn
 
     @property
@@ -106,7 +109,7 @@ class RabbitPlay(object):
 class Producer(RabbitPlay):
     def __init__(self, *args, **kwargs):
         super(Producer, self).__init__(*args, **kwargs)
-        # confirm that he message has reached the queue:
+        # confirm that the message has reached the queue:
         self._channel.confirm_delivery()
 
     def publish(self, message):

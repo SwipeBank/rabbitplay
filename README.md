@@ -4,6 +4,11 @@ Abstraction on top of [pika](https://pika.readthedocs.org/) library for working 
 
 ## Examples  
 
+Examples are configured to use a default user `user`, password `password` and virtual host `vhost`.
+
+*Hint:  
+You can use Docker Compose to launch a RabbitMQ instance with required settings.*
+
 ### Consumer:  
 
 ```sh

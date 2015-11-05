@@ -2,20 +2,17 @@
 
 from rabbitplay import Producer
 from rabbitplay import RabbitConnection as Connection
-from time import sleep
-import sys
+import argparse
 
+
+parser = argparse.ArgumentParser()
+parser.add_argument('queue', nargs='?', default='hello_world_queue')
+parser.add_argument('message', default='Hello World!')
+args = parser.parse_args()
 
 with Connection.instance(user='user', password='password',
                          vhost='vhost') as conn:
 
+    print 'queue:   {}\nmessage: {}'.format(args.queue, args.message)
     producer1 = Producer(conn)
-    producer1.publish('queue1', 'msg1')
-    producer1.publish('queue2', 'msg1')
-    producer1.publish('queue2', 'msg2')
-
-    sleep(3)
-
-    producer2 = Producer(conn)
-    producer2.publish('queue3', 'msg1')
-    producer2.publish('queue4', 'msg1')
+    producer1.publish(args.queue, args.message)

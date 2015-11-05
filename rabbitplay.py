@@ -34,7 +34,6 @@ class RabbitConnection(object):
         self.socket_timeout = socket_timeout
         self.backpressure_detection = backpressure_detection
 
-        print 'connection [created]'
         self._rabbit_conn = pika.BlockingConnection(self._connection_params())
 
     def _credentials(self):
@@ -86,7 +85,6 @@ class RabbitConnection(object):
         return self
 
     def __exit__(self, exception_type, exception_value, traceback):
-        print 'connection [closed]'
         self._rabbit_conn.close()
 
     def close(self):
@@ -103,9 +101,7 @@ class RabbitPlay(object):
     def _channel(self, queue):
         channel = self._rabbit_channels.get(queue)
         if channel and channel.is_open:
-            print 'channel [reuse] [{}]'.format(queue)
             return channel
-        print 'channel [create] [{}]'.format(queue)
         channel = self._connection.channel()
         channel.queue_declare(
             queue=queue,

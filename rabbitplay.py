@@ -1,19 +1,18 @@
 import pika
 import ssl
 
-__rabbit_connection__ = None
 
+class RabbitConnection(object):
 
-class RabbitPlay(object):
+    _instance = None
 
-    def __init__(self, queue, host='localhost', port=5672, vhost=None,
+    def __init__(self, host='localhost', port=5672, vhost=None,
                  user=None, password=None, clean_creds=None, channel_max=None,
                  frame_max=None, heartbeat_interval=None, ca_certs=None,
                  cert_reqs=ssl.CERT_NONE, certfile=None, keyfile=None,
                  ssl_enable=False, ssl_version=ssl.PROTOCOL_SSLv23,
                  connection_attempts=None, retry_delay=None, locale=None,
                  socket_timeout=None, backpressure_detection=None):
-        self.queue = queue
         self.host = host
         self.port = port
         self.vhost = vhost
@@ -34,27 +33,19 @@ class RabbitPlay(object):
         self.locale = locale
         self.socket_timeout = socket_timeout
         self.backpressure_detection = backpressure_detection
-        self._channels = {}
 
-    def __enter__(self):
-        return self
-
-    def __exit__(self, exception_type, exception_value, traceback):
-        self._channel.connection.close()
+        print 'connection [created]'
+        self._rabbit_conn = pika.BlockingConnection(self._connection_params())
 
     def _credentials(self):
-        if not self.user:
-            return None
-        return pika.credentials.PlainCredentials(
+        return None if not self.user else pika.credentials.PlainCredentials(
                 username=self.user,
                 password=self.password,
                 erase_on_connect=self.clean_creds
             )
 
     def _ssl_options(self):
-        if not self.ssl_enable:
-            return None
-        return {
+        return None if not self.ssl_enable else {
             "ca_certs": self.ca_certs,
             "cert_reqs": self.cert_reqs,
             "certfile": self.certfile,
@@ -81,41 +72,62 @@ class RabbitPlay(object):
             backpressure_detection=self.backpressure_detection
         )
 
-    @property
-    def _connection(self):
-        global __rabbit_connection__
-        conn = __rabbit_connection__
-        if conn and conn.is_open:
-            return conn
-        conn = __rabbit_connection__ = pika.BlockingConnection(
-            self._connection_params()
-        )
-        return conn
+    @classmethod
+    def instance(cls, **connection_params):
+        if not cls._instance or not cls._instance._rabbit_conn.is_open:
+            cls._instance = RabbitConnection(**connection_params)
+        return cls._instance
 
     @property
-    def _channel(self):
-        channel = self._channels.get(self.queue)
+    def connection(self):
+        return self._rabbit_conn
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exception_type, exception_value, traceback):
+        print 'connection [closed]'
+        self._rabbit_conn.close()
+
+    def close(self):
+        return self._rabbit_conn.close()
+
+
+class RabbitPlay(object):
+
+    def __init__(self, connection):
+        self._rabbit_conn = connection
+        self._connection = self._rabbit_conn.connection
+        self._rabbit_channels = {}
+
+    def _channel(self, queue):
+        channel = self._rabbit_channels.get(queue)
         if channel and channel.is_open:
+            print 'channel [reuse] [{}]'.format(queue)
             return channel
+        print 'channel [create] [{}]'.format(queue)
         channel = self._connection.channel()
         channel.queue_declare(
-            queue=self.queue,
+            queue=queue,
             durable=True
         )
-        self._channels[self.queue] = channel
-        return channel
+        self._configure_channel(channel)
+        self._rabbit_channels[queue] = channel
+        return self._rabbit_channels[queue]
+
+    def _configure_channel(self, channel):
+        pass
 
 
 class Producer(RabbitPlay):
-    def __init__(self, *args, **kwargs):
-        super(Producer, self).__init__(*args, **kwargs)
-        # confirm that the message has reached the queue:
-        self._channel.confirm_delivery()
 
-    def publish(self, message):
-        return self._channel.basic_publish(
+    def _configure_channel(self, channel):
+        channel.confirm_delivery()
+
+    def publish(self, queue, message):
+        return self._channel(queue).basic_publish(
             exchange='',
-            routing_key=self.queue,
+            routing_key=queue,
             body=message,
             properties=pika.BasicProperties(
                 delivery_mode=2,  # make message persistent
@@ -124,11 +136,9 @@ class Producer(RabbitPlay):
 
 
 class Consumer(RabbitPlay):
-    def __init__(self, *args, **kwargs):
-        super(Consumer, self).__init__(*args, **kwargs)
-        # set quality of service (qos) with prefetch count equal to 1.
-        # TODO: should we try to play with this parameter?
-        self._channel.basic_qos(prefetch_count=1)
+
+    def _configure_channel(self, channel):
+        channel.basic_qos(prefetch_count=1)
 
     def _callback_with_ack(self, callback):
         def callback_with_ack(channel, method, properties, body):
@@ -136,9 +146,9 @@ class Consumer(RabbitPlay):
             channel.basic_ack(delivery_tag=method.delivery_tag)
         return callback_with_ack
 
-    def subscribe(self, on_message):
-        self._channel.basic_consume(
+    def subscribe(self, queue, on_message):
+        self._channel(queue).basic_consume(
             self._callback_with_ack(on_message),
-            queue=self.queue
+            queue=queue
         )
-        self._channel.start_consuming()
+        self._channel(queue).start_consuming()

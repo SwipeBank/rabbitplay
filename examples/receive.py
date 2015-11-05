@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 
+from rabbitplay import Consumer
+from rabbitplay import RabbitConnection as Connection
+import signal
 import sys
 import time
-import signal
-from rabbitplay import Consumer
 
 
 def signal_handler(signum, frame):
@@ -15,10 +16,12 @@ signal.signal(signal.SIGINT, signal_handler)
 signal.signal(signal.SIGTERM, signal_handler)
 
 
-with Consumer('hello_world_queue', user='user',
-              password='password', vhost='vhost') as consumer:
+with Connection.instance(user='user', password='password',
+                         vhost='vhost') as conn:
     def on_message(msg):
         print '[x] received "{}"'.format(msg)
         time.sleep(msg.count('.'))
         print '[x] done'
-    consumer.subscribe(on_message)
+
+    consumer1 = Consumer(conn)
+    consumer1.subscribe('queue1', on_message)

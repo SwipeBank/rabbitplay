@@ -13,12 +13,21 @@ You can use Docker Compose to launch a RabbitMQ instance with required settings.
 
 ```sh
 python -m examples.receive
+python -m examples.receive 'my_queue'
 ```  
 
 ### Producer:  
 
+Custom queue \ message:
 ```sh
-python -m examples.send_message 'rabbit1.'
-python -m examples.send_message 'rabbit5.....'
-python -m examples.send_message 'rabbit10..........'
+python -m examples.send_message 'queue1' 'rabbit1.'
+python -m examples.send_message 'queue1' 'rabbit5.....'
+python -m examples.send_message 'queue1' 'rabbit10..........'
+python -m examples.send_message 'queue2' 'rabbit_feet'
+python -m examples.send_message 'message_to_default_queue'
+```
+
+Multiple messages \ queues:
+```sh
+python -m examples.send_messages
 ```

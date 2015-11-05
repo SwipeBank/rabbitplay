@@ -30,4 +30,4 @@ with Connection.instance(user='user', password='password',
 
     consumer1 = Consumer(conn)
     print 'queue: {}\nlistening...'.format(args.queue)
-    consumer1.subscribe('queue1', on_message)
+    consumer1.subscribe(args.queue, on_message)

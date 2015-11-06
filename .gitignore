@@ -11,4 +11,8 @@ pip-log.txt
 /cover
 
 # python virtual environment
-/.env
+env
+.env
+dist
+build
+*.egg-info

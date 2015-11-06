@@ -1,0 +1,13 @@
+rabbitmq:
+  image: rabbitmq:3.5.6-management
+  ports:
+    - "5672:5672"
+    - "15672:15672"
+  hostname: rabbitmq
+  # privileged: true
+  environment:
+    RABBITMQ_NODENAME: rabbit
+    RABBITMQ_ERLANG_COOKIE: cookie
+    RABBITMQ_DEFAULT_USER: user
+    RABBITMQ_DEFAULT_PASS: password
+    RABBITMQ_DEFAULT_VHOST: vhost

@@ -85,7 +85,7 @@ class RabbitConnection(object):
         return self
 
     def __exit__(self, exception_type, exception_value, traceback):
-        self._rabbit_conn.close()
+        self.close()
 
     def close(self):
         return self._rabbit_conn.close()
@@ -109,7 +109,7 @@ class RabbitPlay(object):
         )
         self._configure_channel(channel)
         self._rabbit_channels[queue] = channel
-        return self._rabbit_channels[queue]
+        return channel
 
     def _configure_channel(self, channel):
         pass
@@ -120,9 +120,9 @@ class Producer(RabbitPlay):
     def _configure_channel(self, channel):
         channel.confirm_delivery()
 
-    def publish(self, queue, message):
+    def publish(self, queue, message, exchange=''):
         return self._channel(queue).basic_publish(
-            exchange='',
+            exchange=exchange,
             routing_key=queue,
             body=message,
             properties=pika.BasicProperties(

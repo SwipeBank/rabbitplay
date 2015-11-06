@@ -3,8 +3,6 @@
 from rabbitplay import Producer
 from rabbitplay import RabbitConnection as Connection
 from time import sleep
-import sys
-
 
 with Connection.instance(user='user', password='password',
                          vhost='vhost') as conn:

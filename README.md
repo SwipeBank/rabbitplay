@@ -30,6 +30,7 @@ You can use Docker Compose to launch a RabbitMQ instance with required settings.
 ### Consumer:  
 
 * [Command line](/examples/receive.py):
+
   ```sh
   # hello_world_queue:
   python -m examples.receive
@@ -37,10 +38,10 @@ You can use Docker Compose to launch a RabbitMQ instance with required settings.
   python -m examples.receive 'my_queue'
   ```
 
-
 ### Producer:  
 
 * [Custom queue \ message](/examples/send_message.py):
+
   ```sh
   python -m examples.send_message 'queue1' 'rabbit1.'
   python -m examples.send_message 'queue1' 'rabbit5.....'
@@ -49,6 +50,7 @@ You can use Docker Compose to launch a RabbitMQ instance with required settings.
 
 
 * [Multiple messages \ queues](/examples/send_messages.py):
+
   ```sh
   python -m examples.send_messages
   ```

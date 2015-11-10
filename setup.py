@@ -5,15 +5,10 @@ RabbitPlay
 Abstraction on top of pika library for working with RabbitMQ.
 """
 from setuptools import setup
-from pip.req import parse_requirements
-
-
-reqs = parse_requirements('./requirements.txt', session=False)
-requirements = [str(x.req) for x in reqs]
 
 setup(
     name="RabbitPlay",
-    version="0.7",
+    version="0.7.1",
     url='https://github.com/SwipeBank/rabbitplay',
     download_url='https://github.com/SwipeBank/rabbitplay/archive/0.7.tar.gz',
     author='Eugene <f0t0n> Naydenov, Michael <m1kev> Voropaiev',

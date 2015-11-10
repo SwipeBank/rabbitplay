@@ -10,7 +10,7 @@ setup(
     name="RabbitPlay",
     version="0.7.1",
     url='https://github.com/SwipeBank/rabbitplay',
-    download_url='https://github.com/SwipeBank/rabbitplay/archive/0.7.tar.gz',
+    download_url='https://github.com/SwipeBank/rabbitplay/archive/0.7.1.tar.gz',
     author='Eugene <f0t0n> Naydenov, Michael <m1kev> Voropaiev',
     author_email='t.34.oxygen@gmail.com, m.voropaiev@gmail.com',
     description='Abstraction on top of pika for working with RabbitMQ.',

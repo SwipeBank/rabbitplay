@@ -21,5 +21,7 @@ setup(
     description='Abstraction on top of pika for working with RabbitMQ.',
     long_description=__doc__,
     py_modules=['rabbitplay'],
-    install_requires=requirements,
+    install_requires=[
+        'pika==0.10.0'
+    ],
 )

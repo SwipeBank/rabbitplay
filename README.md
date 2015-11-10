@@ -9,7 +9,7 @@ Abstraction on top of [pika](https://pika.readthedocs.org/) library for working 
   # master branch:
   pip install git+https://github.com/SwipeBank/rabbitplay.git#egg=rabbitplay
   # specific version (tag):
-  pip install git+https://github.com/SwipeBank/rabbitplay.git@0.7#egg=rebbitplay-0.7
+  pip install git+https://github.com/SwipeBank/rabbitplay.git@0.7#egg=rabbitplay-0.7
   ```
 
 * Manual installation:
